@@ -3,7 +3,6 @@ package services;
 import models.users.Renter;
 import models.users.Serviceman;
 import models.users.User;
-import util.PlatformHelpers;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -24,7 +23,7 @@ public class AuthService {
         String password = scanner.nextLine();
 
         for (User user : userArray) {
-            if (username.equals(user.getUserName()) && password.equals(user.getPassword())) {
+            if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
                 System.out.println("Uspešno ste se prijavili kao: " + user.getClass().getSimpleName());
                 return user;
             }
@@ -71,6 +70,12 @@ public class AuthService {
             }else {
                 System.out.print("Unesite korisničko ime: ");
                 String username = scanner.nextLine();
+                // We check whether the user already exists. It is assumed that usernames are unique.
+                boolean check = usernameAlreadyExists(); // TODO
+                if (check) {
+                    System.out.println("This username already exists, please choose a different one!");
+                    continue;
+                }
                 System.out.print("Unesite lozinku: ");
                 String password = scanner.nextLine();
                 System.out.print("Unesite ime: ");

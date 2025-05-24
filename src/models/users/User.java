@@ -1,25 +1,26 @@
 package models.users;
 
 public abstract class User {
-    protected String userName;
+
+    protected String username; // usernames are assumed to be unique.
     protected String password;
     protected String name;
     protected String surname;
     protected String type;
 
-    public User(String userName, String password, String name, String surname, String type) {
-        this.userName = userName;
+    public User(String username, String password, String name, String surname, String type) {
+        this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.type = type;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

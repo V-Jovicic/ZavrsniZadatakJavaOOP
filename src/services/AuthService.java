@@ -40,6 +40,7 @@ public class AuthService {
         // If registration is successful, this user is then returned.
         // If registration is not successful, null is returned. This is later checked in Platform.java.
 
+        DatabaseService dbService = new DatabaseService();
         User newUser;
 
         while (true) {
@@ -72,7 +73,7 @@ public class AuthService {
                 System.out.print("Unesite korisničko ime: ");
                 String username = scanner.nextLine();
                 // We check whether the user already exists. It is assumed that usernames are unique.
-                boolean check = usernameAlreadyExists(); // TODO
+                boolean check = dbService.usernameAlreadyExists(username);
                 if (check) {
                     System.out.println("This username already exists, please choose a different one!");
                     continue;
@@ -88,7 +89,12 @@ public class AuthService {
                 // This ensures intended behaviour in case of any missed possibilities, and enables scalability in regard to # of user types.
                 switch (choice) {
                     case 1 -> {
-                        Card newUserCard = generateCard(); // TODO
+                        // We generate a user's card and add it to the database
+                        Card newUserCard = dbService.generateCard(username);
+                        List<Card> newList = dbService.getCardsArr();
+                        newList.add(newUserCard);
+                        dbService.setCardsArr(newList);
+                        // Creating a user to return
                         newUser = new Renter(username, password, name, surname, "renter", newUserCard.getId());
                         return newUser;
                     }
@@ -104,9 +110,6 @@ public class AuthService {
                     }
                 }
             }
-
-
-
         }
     }
 

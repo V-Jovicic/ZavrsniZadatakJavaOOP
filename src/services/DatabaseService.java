@@ -13,7 +13,7 @@ import models.vehicles.Vehicle;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +39,7 @@ public class DatabaseService {
             System.out.println("Greska pri ucitavanju iz baze podataka!");
             System.exit(0);
         }
+
     }
 
     private List<User> loadUsers() {
@@ -125,8 +126,8 @@ public class DatabaseService {
                 String[] data = line.split(",");
                 String id = data[0];
                 String ownerUsername = data[1];
-                Date cardValidFrom = Date.valueOf(data[2]);
-                Date cardValidUntil = Date.valueOf(data[3]);
+                LocalDate cardValidFrom = LocalDate.parse(data[2]);
+                LocalDate cardValidUntil = LocalDate.parse(data[3]);
                 double balance = Double.parseDouble(data[4]);
                 String currentlyRentedVehicleId = data[5];
                 String rentHistory = data[6];
@@ -139,6 +140,10 @@ public class DatabaseService {
         }
         return cardsArr;
     }
+
+    // Our setter methods will also act as writer methods to the .csv files,
+    // as every time we want to update the app's Lists, we also want to update the db.
+    // TODO
 
     public List<User> getUsersArr() {
         return usersArr;
@@ -161,5 +166,19 @@ public class DatabaseService {
         this.cardsArr = cardsArr;
     }
 
+    boolean usernameAlreadyExists(String username) {
+        for (User targetUser : getUsersArr()) {
+            if (username.equalsIgnoreCase(targetUser.getUsername())) return true;
+        }
+        return false;
+    }
+
+    Card generateCard(String ownerUsername) {
+        int counter = cardsArr.size();
+        String id = "C" + String.format("%04d", counter);
+        LocalDate cardValidFrom = LocalDate.now();
+        LocalDate cardValidUntil = LocalDate.now().plusYears(1);
+        return new Card(id, ownerUsername, cardValidFrom, cardValidUntil, 0, "", "");
+    }
 
 }

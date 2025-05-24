@@ -1,19 +1,19 @@
 package models.cards;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Card {
 
     private String id; // The ID format in the db is "CXXXX" (X representing integer numbers).
     private String ownerUsername;
-    private Date cardValidFrom;
-    private Date cardValidUntil;
+    private LocalDate cardValidFrom;
+    private LocalDate cardValidUntil;
     private double balance;
     private String currentlyRentedVehicleId; // The format in the db is "VXXXX" (X representing integer numbers).
     private String rentHistory; // The format in the db is "RXXXX_RXXXX"
                                 // (X representing integer numbers, underscores acting as separators if there is more than 1 rent in the history)
 
-    public Card(String id, String ownerUserName, Date cardValidFrom, Date cardValidUntil, double balance, String currentlyRentedVehicleId, String rentHistory) {
+    public Card(String id, String ownerUserName, LocalDate cardValidFrom, LocalDate cardValidUntil, double balance, String currentlyRentedVehicleId, String rentHistory) {
         this.id = id;
         this.ownerUsername = ownerUserName;
         this.cardValidFrom = cardValidFrom;
@@ -37,17 +37,17 @@ public class Card {
         this.ownerUsername = ownerUsername;
     }
 
-    public Date getCardValidFrom() {
+    public LocalDate getCardValidFrom() {
         return cardValidFrom;
     }
-    public void setCardValidFrom(Date cardValidFrom) {
+    public void setCardValidFrom(LocalDate cardValidFrom) {
         this.cardValidFrom = cardValidFrom;
     }
 
-    public Date getCardValidUntil() {
+    public LocalDate getCardValidUntil() {
         return cardValidUntil;
     }
-    public void setCardValidUntil(Date cardValidUntil) {
+    public void setCardValidUntil(LocalDate cardValidUntil) {
         this.cardValidUntil = cardValidUntil;
     }
 

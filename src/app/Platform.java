@@ -1,12 +1,10 @@
 package app;
 
 import models.users.User;
-import models.vehicles.Vehicle;
 import services.AuthService;
 import services.DatabaseService;
 import util.PlatformHelpers;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -42,15 +40,15 @@ public class Platform {
                         activeUser = authService.registration(scanner); // THIS CAN RETURN NULL
                         // We check for null as this is the return value when a user wishes to return without creating an account.
                         if (activeUser != null) {
-                            List<User> newList = dbService.getUsersArr();
                             // Fetch entire list of users, append the new user, set the new list
+                            List<User> newList = dbService.getUsersArr();
                             newList.add(activeUser);
                             dbService.setUsersArr(newList);
                             PlatformHelpers.userLoggedInMenu(activeUser);
                         }
                     }
                     case 0 -> { return; }
-                    default -> { continue; }
+                    default -> {}
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Molimo unesite broj kao opciju!");

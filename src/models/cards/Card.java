@@ -9,17 +9,17 @@ public class Card {
     private Date cardValidFrom;
     private Date cardValidUntil;
     private double balance;
-    private String currentlyRentedVehicle; // The format in the db is "VXXXX" (X representing integer numbers).
+    private String currentlyRentedVehicleId; // The format in the db is "VXXXX" (X representing integer numbers).
     private String rentHistory; // The format in the db is "RXXXX_RXXXX"
                                 // (X representing integer numbers, underscores acting as separators if there is more than 1 rent in the history)
 
-    public Card(String id, String ownerUserName, Date cardValidFrom, Date cardValidUntil, double balance, String currentlyRentedVehicle, String rentHistory) {
+    public Card(String id, String ownerUserName, Date cardValidFrom, Date cardValidUntil, double balance, String currentlyRentedVehicleId, String rentHistory) {
         this.id = id;
         this.ownerUsername = ownerUserName;
         this.cardValidFrom = cardValidFrom;
         this.cardValidUntil = cardValidUntil;
         this.balance = balance;
-        this.currentlyRentedVehicle = currentlyRentedVehicle;
+        this.currentlyRentedVehicleId = currentlyRentedVehicleId;
         this.rentHistory = rentHistory;
     }
 
@@ -58,11 +58,11 @@ public class Card {
         this.balance = balance;
     }
 
-    public String getCurrentlyRentedVehicle() {
-        return currentlyRentedVehicle;
+    public String getCurrentlyRentedVehicleId() {
+        return currentlyRentedVehicleId;
     }
-    public void setCurrentlyRentedVehicle(String currentlyRentedVehicle) {
-        this.currentlyRentedVehicle = currentlyRentedVehicle;
+    public void setCurrentlyRentedVehicleId(String currentlyRentedVehicleId) {
+        this.currentlyRentedVehicleId = currentlyRentedVehicleId;
     }
 
     public String getRentHistory() {

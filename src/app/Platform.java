@@ -3,6 +3,7 @@ package app;
 import models.users.User;
 import models.vehicles.Vehicle;
 import services.AuthService;
+import services.DatabaseService;
 import util.PlatformHelpers;
 
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ public class Platform {
 
         Scanner scanner = new Scanner(System.in);
         AuthService authService = new AuthService();
-        List<User> users = new ArrayList<User>();
-        List<Vehicle> vehicles = new ArrayList<Vehicle>();
+        DatabaseService dbService = new DatabaseService();
         User activeUser;
 
         while(true) {
@@ -32,7 +32,7 @@ public class Platform {
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1 -> {
-                        activeUser = authService.login(users, scanner); // THIS CAN RETURN NULL
+                        activeUser = authService.login(dbService.getUsersArr(), scanner); // THIS CAN RETURN NULL
                         // We check for null as this is the return value when a user enters incorrect credentials.
                         if (activeUser != null) {
                             PlatformHelpers.userLoggedInMenu(activeUser);
@@ -42,7 +42,10 @@ public class Platform {
                         activeUser = authService.registration(scanner); // THIS CAN RETURN NULL
                         // We check for null as this is the return value when a user wishes to return without creating an account.
                         if (activeUser != null) {
-                            users.add(activeUser);
+                            List<User> newList = dbService.getUsersArr();
+                            // Fetch entire list of users, append the new user, set the new list
+                            newList.add(activeUser);
+                            dbService.setUsersArr(newList);
                             PlatformHelpers.userLoggedInMenu(activeUser);
                         }
                     }

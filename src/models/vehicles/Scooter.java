@@ -5,12 +5,12 @@ import enums.State;
 public class Scooter extends Vehicle {
 
     double highestSpeed;
-    int batterDuration; // described as # of hours of use
+    int batteryDuration; // described as # of hours of use
 
-    public Scooter(String id, String type, String ownerUsername, int perHourRate, int wheelSize, int maxLoadWeight, State state, boolean isRented, double highestSpeed, int batterDuration) {
+    public Scooter(String id, String type, String ownerUsername, int perHourRate, int wheelSize, int maxLoadWeight, State state, boolean isRented, double highestSpeed, int batteryDuration) {
         super(id, type, ownerUsername, perHourRate, wheelSize, maxLoadWeight, state, isRented);
         this.highestSpeed = highestSpeed;
-        this.batterDuration = batterDuration;
+        this.batteryDuration = batteryDuration;
     }
 
 }

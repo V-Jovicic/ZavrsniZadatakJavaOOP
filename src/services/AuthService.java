@@ -1,5 +1,6 @@
 package services;
 
+import models.cards.Card;
 import models.users.Renter;
 import models.users.Serviceman;
 import models.users.User;
@@ -87,8 +88,8 @@ public class AuthService {
                 // This ensures intended behaviour in case of any missed possibilities, and enables scalability in regard to # of user types.
                 switch (choice) {
                     case 1 -> {
-                        String cardId = generateCardId(); // TODO
-                        newUser = new Renter(username, password, name, surname, "renter", cardId);
+                        Card newUserCard = generateCard(); // TODO
+                        newUser = new Renter(username, password, name, surname, "renter", newUserCard.getId());
                         return newUser;
                     }
                     case 2 -> {

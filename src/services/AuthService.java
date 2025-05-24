@@ -34,13 +34,12 @@ public class AuthService {
         return null;
     }
 
-    public User registration (Scanner scanner) {
+    public User registration (DatabaseService dbService, Scanner scanner) {
 
         // We create a blank user, and depending on the type generate and assign a card ID.
         // If registration is successful, this user is then returned.
         // If registration is not successful, null is returned. This is later checked in Platform.java.
 
-        DatabaseService dbService = new DatabaseService();
         User newUser;
 
         while (true) {

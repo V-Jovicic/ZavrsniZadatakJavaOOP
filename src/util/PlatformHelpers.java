@@ -4,8 +4,8 @@ import models.users.User;
 
 public class PlatformHelpers {
 
-    // WORK ON
-    public static void userLoggedInDisplay(User activeUser) {
+    // TODO
+    public static void userLoggedInMenu(User activeUser) {
         if(activeUser.getType().equalsIgnoreCase("iznajmljivac")) {
             System.out.println("");
         }

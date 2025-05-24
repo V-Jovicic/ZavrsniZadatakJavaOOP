@@ -3,6 +3,7 @@ package app;
 import models.users.User;
 import models.vehicles.Vehicle;
 import services.AuthService;
+import util.PlatformHelpers;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -19,26 +20,35 @@ public class Platform {
         List<Vehicle> vehicles = new ArrayList<Vehicle>();
         User activeUser;
 
-
-        System.out.println("==========");
-        System.out.println("Dobro dosli u NSGOClub aplikaciju!");
-        System.out.println("1. Prijava");
-        System.out.println("2. Registracija");
-        System.out.println("0. Izlaz");
-
         while(true) {
+            System.out.println("===============");
+            System.out.println("Dobro dosli u NSGOClub aplikaciju!");
+            System.out.println("1. Prijava");
+            System.out.println("2. Registracija");
+            System.out.println("0. Izlaz");
+
             try {
                 System.out.print("Izaberite opciju: ");
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1 -> {
-                        activeUser = authService.login(users, scanner);
+                        activeUser = authService.login(users, scanner); // THIS CAN RETURN NULL
+                        // We check for null as this is the return value when a user enters incorrect credentials.
+                        if (activeUser != null) {
+                            PlatformHelpers.userLoggedInMenu(activeUser);
+                        }
                     }
-                    case 2 -> registracija(); // NOT IMPLEMENTED YET
+                    case 2 -> {
+                        activeUser = authService.registration(scanner); // THIS CAN RETURN NULL
+                        // We check for null as this is the return value when a user wishes to return without creating an account.
+                        if (activeUser != null) {
+                            users.add(activeUser);
+                            PlatformHelpers.userLoggedInMenu(activeUser);
+                        }
+                    }
                     case 0 -> { return; }
                     default -> { continue; }
                 }
-                break;
             } catch (InputMismatchException e) {
                 System.out.println("Molimo unesite broj kao opciju!");
             }

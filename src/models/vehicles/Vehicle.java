@@ -26,8 +26,73 @@ public abstract class Vehicle implements Rentable, Serviceable {
         this.isRented = isRented;
     }
 
-    // TODO
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getOwnerUsername() {
+        return ownerUsername;
+    }
+
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
+    }
+
+    public int getPerHourRate() {
+        return perHourRate;
+    }
+
+    public void setPerHourRate(int perHourRate) {
+        this.perHourRate = perHourRate;
+    }
+
+    public int getWheelSize() {
+        return wheelSize;
+    }
+
+    public void setWheelSize(int wheelSize) {
+        this.wheelSize = wheelSize;
+    }
+
+    public int getMaxLoadWeight() {
+        return maxLoadWeight;
+    }
+
+    public void setMaxLoadWeight(int maxLoadWeight) {
+        this.maxLoadWeight = maxLoadWeight;
+    }
+
+    public boolean isRented() {
+        return isRented;
+    }
+
+    public void setRented(boolean rented) {
+        isRented = rented;
+    }
+
+    @Override
+    public State checkVehicleState() {
+        return state;
+    }
+
+    @Override
+    public void fixVehicle(State state) {
+        this.state = state;
+    }
+
+    // TODO
     @Override
     public void rentVehicle() {
 
@@ -38,13 +103,4 @@ public abstract class Vehicle implements Rentable, Serviceable {
 
     }
 
-    @Override
-    public void checkVehicleState() {
-
-    }
-
-    @Override
-    public void fixVehicle() {
-
-    }
 }

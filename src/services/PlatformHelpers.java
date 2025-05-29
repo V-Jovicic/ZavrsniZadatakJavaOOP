@@ -1,8 +1,10 @@
 package services;
 
+import enums.State;
 import models.cards.Card;
 import models.users.Renter;
 import models.users.User;
+import models.vehicles.Vehicle;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -25,7 +27,7 @@ public class PlatformHelpers {
             System.out.println("1. Pretraga vozila");
 
             // Menu options for Renters
-            Card card;
+            Card card = null;
             if (activeUser.getType().equalsIgnoreCase("renter")) {
                 card = ((Renter) activeUser).getCardId().findcard(); // TODO
                 System.out.println("2. Deponovanje sredstava na racun");
@@ -50,6 +52,7 @@ public class PlatformHelpers {
                     case 1 -> pretragaVozila(); // TODO
                     case 2 -> {
                         if (activeUser.getType().equalsIgnoreCase("renter")) {
+                            assert card != null; // Compile-time assurance, since we only reach this point is the user is a renter
                             depositBalance(card);
                         } else if (activeUser.getType().equalsIgnoreCase("serviceman")) {
                             pregledVozila(); // TODO
@@ -64,8 +67,9 @@ public class PlatformHelpers {
                     }
                     case 4 -> {
                         if (activeUser.getType().equalsIgnoreCase("renter")) {
+                            assert card != null; // Compile-time assurance, since we only reach this point is the user is a renter
                             if (!card.getCurrentlyRentedVehicleId().equalsIgnoreCase("")) {
-                                iznajmljivanjeVozila(); // TODO
+                                vracanjeVozila(); // TODO
                             }
                         } else if (activeUser.getType().equalsIgnoreCase("serviceman")) {
                             System.out.println("Nepostojeca opcija!");
@@ -95,6 +99,28 @@ public class PlatformHelpers {
             dbService.setCardsArr(newCardsArr);
         } catch (InputMismatchException e) {
             System.out.println("Molimo unesite broj kao opciju!");
+        }
+    }
+
+    public void popravkaVozila() {
+        // TODO (fix params once function in place)
+        pretragaVozila(Stanje == "veliko_ostecenje" && Stanje == "malo_ostecenje");
+        System.out.print("Izaberite ID vozila koje zelite da popravite: ");
+        try {
+            // Browsing by vehicle ID as it guarantees we update the correct vehicle.
+            // We could alternatively browse by ordinal values. However, this is inconsistent as we cannot guarantee vehicles will remain in the same order each search.
+            String choice = scanner.next();
+            List<Vehicle> newVehiclesArr = dbService.getVehiclesArr();
+            for (Vehicle vehicle : newVehiclesArr) {
+                // We check to see if the user actually inputted an ID from the displayed list of vehicles
+                if (vehicle.getId().equalsIgnoreCase(choice) || (vehicle.checkVehicleState() != State.BEZ_OSTECENJA && vehicle.checkVehicleState() != State.NEUPOTREBLJIVO)) {
+                    vehicle.fixVehicle(State.BEZ_OSTECENJA);
+                }
+            }
+            // We set the live vehicles array, which automatically updated the database.
+            dbService.setVehiclesArr(newVehiclesArr);
+        } catch (Exception e) {
+            System.out.println("Doslo je do greske pri odabiru vozila. Molimo pokusajte ponovo.");
         }
     }
 }

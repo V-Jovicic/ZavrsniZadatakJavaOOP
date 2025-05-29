@@ -1,8 +1,11 @@
 package interfaces;
 
+import enums.State;
+
 public interface Serviceable {
 
-    void checkVehicleState();
-    void fixVehicle();
+    State checkVehicleState();
+
+    void fixVehicle(State state);
 
 }

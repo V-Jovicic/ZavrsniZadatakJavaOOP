@@ -71,4 +71,18 @@ public class Card {
     public void setRentHistory(String rentHistory) {
         this.rentHistory = rentHistory;
     }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id='" + id + '\'' +
+                ", ownerUsername='" + ownerUsername + '\'' +
+                ", cardValidFrom=" + cardValidFrom +
+                ", cardValidUntil=" + cardValidUntil +
+                ", balance=" + balance +
+                ", currentlyRentedVehicleId='" + currentlyRentedVehicleId + '\'' +
+                ", rentHistory='" + rentHistory + '\'' +
+                '}';
+    }
+
 }

@@ -103,4 +103,18 @@ public abstract class Vehicle implements Rentable, Serviceable {
 
     }
 
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", ownerUsername='" + ownerUsername + '\'' +
+                ", perHourRate=" + perHourRate +
+                ", wheelSize=" + wheelSize +
+                ", maxLoadWeight=" + maxLoadWeight +
+                ", state=" + state +
+                ", isRented=" + isRented +
+                '}';
+    }
+
 }

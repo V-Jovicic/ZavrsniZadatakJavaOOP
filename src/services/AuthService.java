@@ -19,9 +19,9 @@ public class AuthService {
 
         System.out.println("===============");
         System.out.print("Unesite korisničko ime: ");
-        String username = scanner.nextLine();
+        String username = scanner.next();
         System.out.print("Unesite lozinku: ");
-        String password = scanner.nextLine();
+        String password = scanner.next();
 
         for (User user : userArray) {
             if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
@@ -70,7 +70,7 @@ public class AuthService {
                 return null;
             }else {
                 System.out.print("Unesite korisničko ime: ");
-                String username = scanner.nextLine();
+                String username = scanner.next();
                 // We check whether the user already exists. It is assumed that usernames are unique.
                 boolean check = dbService.usernameAlreadyExists(username);
                 if (check) {
@@ -78,11 +78,11 @@ public class AuthService {
                     continue;
                 }
                 System.out.print("Unesite lozinku: ");
-                String password = scanner.nextLine();
+                String password = scanner.next();
                 System.out.print("Unesite ime: ");
-                String name = scanner.nextLine();
+                String name = scanner.next();
                 System.out.print("Unesite prezime: ");
-                String surname = scanner.nextLine();
+                String surname = scanner.next();
 
                 // Despite int choice having only 2 possible values at this point in the code, for consistency sakes I used a switch.
                 // This ensures intended behaviour in case of any missed possibilities, and enables scalability in regard to # of user types.

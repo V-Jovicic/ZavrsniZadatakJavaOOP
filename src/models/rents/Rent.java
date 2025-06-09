@@ -1,7 +1,6 @@
 package models.rents;
 
 import enums.AdditionalEquipment;
-import models.vehicles.Vehicle;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,11 +11,11 @@ public class Rent {
     private LocalDateTime dateTimeValidFrom;
     private LocalDateTime dateTimeValidUntil;
     private String renterUsername;
-    private Vehicle vehicleId;
+    private String vehicleId;
     private List<AdditionalEquipment> equipment;
     private boolean serviceDone;
 
-    public Rent(String id, LocalDateTime dateTimeValidFrom, LocalDateTime dateTimeValidUntil, String renterUsername, Vehicle vehicleId, List<AdditionalEquipment> equipment, boolean serviceDone) {
+    public Rent(String id, LocalDateTime dateTimeValidFrom, LocalDateTime dateTimeValidUntil, String renterUsername, String vehicleId, List<AdditionalEquipment> equipment, boolean serviceDone) {
         this.id = id;
         this.dateTimeValidFrom = dateTimeValidFrom;
         this.dateTimeValidUntil = dateTimeValidUntil;
@@ -29,7 +28,6 @@ public class Rent {
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -37,7 +35,6 @@ public class Rent {
     public LocalDateTime getDateTimeValidFrom() {
         return dateTimeValidFrom;
     }
-
     public void setDateTimeValidFrom(LocalDateTime dateTimeValidFrom) {
         this.dateTimeValidFrom = dateTimeValidFrom;
     }
@@ -45,7 +42,6 @@ public class Rent {
     public LocalDateTime getDateTimeValidUntil() {
         return dateTimeValidUntil;
     }
-
     public void setDateTimeValidUntil(LocalDateTime dateTimeValidUntil) {
         this.dateTimeValidUntil = dateTimeValidUntil;
     }
@@ -53,23 +49,21 @@ public class Rent {
     public String getRenterUsername() {
         return renterUsername;
     }
-
     public void setRenterUsername(String renterUsername) {
         this.renterUsername = renterUsername;
     }
 
-    public Vehicle getVehicleId() {
+    public String getVehicleId() {
         return vehicleId;
     }
 
-    public void setVehicleId(Vehicle vehicleId) {
+    public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
     }
 
     public List<AdditionalEquipment> getEquipment() {
         return equipment;
     }
-
     public void setEquipment(List<AdditionalEquipment> equipment) {
         this.equipment = equipment;
     }
@@ -77,7 +71,6 @@ public class Rent {
     public boolean isServiceDone() {
         return serviceDone;
     }
-
     public void setServiceDone(boolean serviceDone) {
         this.serviceDone = serviceDone;
     }

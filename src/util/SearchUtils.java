@@ -1,6 +1,8 @@
 package util;
 
+import enums.State;
 import models.rents.Rent;
+import models.users.User;
 import models.vehicles.Vehicle;
 
 import java.util.ArrayList;
@@ -8,6 +10,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class SearchUtils {
+
+    public static boolean usernameAlreadyExists(List<User> usersArr, String username) {
+        for (User targetUser : usersArr) {
+            if (username.equalsIgnoreCase(targetUser.getUsername())) return true;
+        }
+        return false;
+    }
 
     public static List<Vehicle> vehicleSearch(Scanner scanner, List<Vehicle> vehiclesArr, List<Rent> rentsArr) {
         String[] returnArrParams = {"null", "null", "null"};
@@ -121,11 +130,23 @@ public class SearchUtils {
     public static List<Vehicle> vehicleSearchByService(List<Vehicle> vehiclesArr, List<Rent> rentsArr, boolean serviceDone) {
         List<Vehicle> returnArr = new ArrayList<>();
         for (Rent rent : rentsArr) {
-            if (rent.isServiceDone() == serviceDone) {
+            if (rent.isServiceDone() == serviceDone && rent.getDateTimeValidUntil() != null) {
                 for (Vehicle vozilo : vehiclesArr) {
-                    if (rent.getVehicleId() == vozilo) {
+                    if (rent.getVehicleId().equalsIgnoreCase(vozilo.getId())) {
                         returnArr.add(vozilo);
                     }
+                }
+            }
+        }
+        return returnArr;
+    }
+
+    public static List<Vehicle> vehicleSearchByState(List<Vehicle> vehiclesArr, State[] targetStates) {
+        List<Vehicle> returnArr = new ArrayList<>();
+        for (Vehicle vehicle : vehiclesArr) {
+            for (State state : targetStates) {
+                if (vehicle.checkVehicleState() == state) {
+                    returnArr.add(vehicle);
                 }
             }
         }

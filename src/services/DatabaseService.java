@@ -1,5 +1,6 @@
 package services;
 
+import enums.AdditionalEquipment;
 import enums.State;
 import models.cards.Card;
 import models.rents.Rent;
@@ -10,8 +11,11 @@ import models.vehicles.Vehicle;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DatabaseService {
 
@@ -30,6 +34,7 @@ public class DatabaseService {
         usersArr = loadUsers();
         vehiclesArr = loadVehicles();
         cardsArr = loadCards();
+        rentsArr = loadRents();
 
         if (usersArr == null && vehiclesArr == null && cardsArr == null) {
             // If we are unable to read the database, the rest of the program won't function so we immediately terminate.
@@ -74,7 +79,6 @@ public class DatabaseService {
         }
         return usersArr;
     }
-
     private List<Vehicle> loadVehicles() {
 
         // We try to read the vehicle .csv file.
@@ -100,7 +104,7 @@ public class DatabaseService {
                     double height = Double.parseDouble(data[9]);
                     vehiclesArr.add(new Bicycle(id, type, ownerUsername, perHourRate, wheelSize, maxLoadWeight, state, isRented, numOfGears, height));
                 }else if (type.equalsIgnoreCase("Scooter")) {
-                    int highestSpeed = Integer.parseInt(data[10]);
+                    double highestSpeed = Double.parseDouble(data[10]);
                     int batteryDuration = Integer.parseInt(data[11]);
                     vehiclesArr.add(new Scooter(id, type, ownerUsername, perHourRate, wheelSize, maxLoadWeight, state, isRented, highestSpeed, batteryDuration));
                 }
@@ -111,7 +115,6 @@ public class DatabaseService {
         }
         return vehiclesArr;
     }
-
     private List<Card> loadCards() {
 
         // We try to read the cards .csv file.
@@ -140,16 +143,53 @@ public class DatabaseService {
         return cardsArr;
     }
 
+    private List<Rent> loadRents() {
+
+        // We try to read the cards .csv file.
+        // If successful, return the List of cards
+        // If not successful, return null. This is checked in the constructor after the call of this function.
+
+        List<Rent> rentsArr = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(RENTS_CSV))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                String id = data[0];
+                LocalDateTime dateValidFrom = LocalDateTime.parse(data[1]);
+                // We check if the vehicle was returned (rent dateValidUntil != null),
+                // If so, we parse the DateTime value. If not, we assign null.
+                LocalDateTime dateValidUntil = null;
+                if (!data[2].equalsIgnoreCase("null")) {
+                    dateValidUntil = LocalDateTime.parse(data[2]);
+                }
+                String renterUsername = data[3];
+                String vehicleId = data[4];
+                // As with the DateTime value, we check if there is no additional equipment
+                List<AdditionalEquipment> additionalEquipment = null;
+                if (!data[5].equalsIgnoreCase("null")) {
+                    additionalEquipment = Arrays.stream(data[5].split("/"))
+                            .map(AdditionalEquipment::valueOf)
+                            .collect(Collectors.toList());
+                }
+                boolean wasServiceDone = Boolean.parseBoolean(data[6]);
+
+                rentsArr.add(new Rent(id, dateValidFrom, dateValidUntil, renterUsername, vehicleId, additionalEquipment, wasServiceDone));
+            }
+        } catch (IOException e) {
+            System.out.println("Greška pri učitavanju najma: " + e.getMessage());
+            return null;
+        }
+        return rentsArr;
+    }
+
     // Our setter methods will also act as writer methods to the .csv files,
     // as every time we want to update the app's Lists, we also want to update the db.
-    // TODO
 
     public List<User> getUsersArr() {
         return usersArr;
     }
     public void setUsersArr(List<User> usersArr) {
         this.usersArr = usersArr;
-
 
         // Firstly, we need to empty out the database, so that we can rewrite it
         // We don't keep appending since that doesn't cover deletion of entries
@@ -209,6 +249,49 @@ public class DatabaseService {
     }
     public void setVehiclesArr(List<Vehicle> vehiclesArr) {
         this.vehiclesArr = vehiclesArr;
+
+        // Firstly, we need to empty out the database, so that we can rewrite it
+        // We don't keep appending since that doesn't cover deletion of entries
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(VEHICLES_CSV))) {
+            writer.write("");
+        } catch (IOException e) {
+            System.out.println("Doslo je do greske prilikom azuriranja baze podataka!");
+            System.exit(0);
+        }
+
+        for (Vehicle vehicle : vehiclesArr) {
+            StringBuilder query = new StringBuilder(
+                    vehicle.getId() + ',' +
+                            vehicle.getType() + ',' +
+                            vehicle.getOwnerUsername() + ',' +
+                            vehicle.getPerHourRate() + ',' +
+                            vehicle.getWheelSize() + ',' +
+                            vehicle.getMaxLoadWeight() + ',' +
+                            vehicle.checkVehicleState() + ',' +
+                            vehicle.isRented() + ','
+            );
+
+            if (vehicle.getType().equalsIgnoreCase("Bicycle")) {
+                query.append(((Bicycle) vehicle).getNumOfGears())
+                        .append(",")
+                        .append(((Bicycle) vehicle).getHeight())
+                        .append(",null,null");
+            } else if (vehicle.getType().equalsIgnoreCase("Scooter")) {
+                query.append("null,null,")
+                        .append(((Scooter) vehicle).getHighestSpeed())
+                        .append(",")
+                        .append(((Scooter) vehicle).getBatteryDuration());
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(VEHICLES_CSV, true))) {
+                writer.write(String.valueOf(query));
+                writer.newLine();
+            } catch (IOException e) {
+                System.out.println("Doslo je do greske prilikom azuriranja baze podataka!");
+                System.exit(0);
+            }
+
+        }
     }
 
     public List<Card> getCardsArr() {
@@ -271,16 +354,51 @@ public class DatabaseService {
     public List<Rent> getRentsArr() {
         return rentsArr;
     }
-
     public void setRentsArr(List<Rent> rentsArr) {
         this.rentsArr = rentsArr;
-    }
 
-    boolean usernameAlreadyExists(String username) {
-        for (User targetUser : getUsersArr()) {
-            if (username.equalsIgnoreCase(targetUser.getUsername())) return true;
+        // Firstly, we need to empty out the database, so that we can rewrite it
+        // We don't keep appending since that doesn't cover deletion of entries
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(RENTS_CSV))) {
+            writer.write("");
+        } catch (IOException e) {
+            System.out.println("Doslo je do greske prilikom azuriranja baze podataka!");
+            System.exit(0);
         }
-        return false;
+
+        // We loop through the new array of existing rents, create a query line that we will append to the database
+        for (Rent rent : rentsArr) {
+            StringBuilder query = new StringBuilder(
+                    rent.getId() + "," +
+                            rent.getDateTimeValidFrom() + "," +
+                            rent.getDateTimeValidUntil() + "," +
+                            rent.getRenterUsername() + "," +
+                            rent.getVehicleId() + ","
+            );
+
+            if (rent.getEquipment().isEmpty()) {
+                query.append("null,");
+            } else {
+                int counter = 0;
+                for (AdditionalEquipment equipment : rent.getEquipment()) {
+                    if (++counter == rent.getEquipment().size()) {
+                        query.append(equipment);
+                    } else {
+                        query.append(equipment).append("_");
+                    }
+                }
+            }
+
+            query.append(rent.isServiceDone());
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(RENTS_CSV, true))) {
+                writer.write(String.valueOf(query));
+                writer.newLine();
+            } catch (IOException e) {
+                System.out.println("Doslo je do greske prilikom azuriranja baze podataka!");
+                System.exit(0);
+            }
+        }
     }
 
     Card generateCard(String ownerUsername) {

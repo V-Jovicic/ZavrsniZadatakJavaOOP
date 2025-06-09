@@ -4,6 +4,7 @@ import models.cards.Card;
 import models.users.Renter;
 import models.users.Serviceman;
 import models.users.User;
+import util.SearchUtils;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -72,7 +73,7 @@ public class AuthService {
                 System.out.print("Unesite korisničko ime: ");
                 String username = scanner.next();
                 // We check whether the user already exists. It is assumed that usernames are unique.
-                boolean check = dbService.usernameAlreadyExists(username);
+                boolean check = SearchUtils.usernameAlreadyExists(dbService.getUsersArr(), username);
                 if (check) {
                     System.out.println("This username already exists, please choose a different one!");
                     continue;

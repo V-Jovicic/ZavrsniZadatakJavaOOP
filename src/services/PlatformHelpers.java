@@ -1,5 +1,6 @@
 package services;
 
+import enums.State;
 import models.cards.Card;
 import models.users.Renter;
 import models.users.User;
@@ -47,8 +48,9 @@ public class PlatformHelpers {
 
             System.out.println("0. Odjava");
 
+            System.out.println("===============");
+            System.out.print("Izaberite opciju: ");
             try {
-                System.out.print("Izaberite opciju: ");
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1 -> {
@@ -70,14 +72,34 @@ public class PlatformHelpers {
                             assert card != null; // Compile-time assurance, since we only reach this point is the user is a renter
                             depositBalance(card);
                         } else if (activeUser.getType().equalsIgnoreCase("serviceman")) {
-//                            pregledVozila(); // TODO
+                            List<Vehicle> resultOfSearch = SearchUtils.vehicleSearchByService(dbService.getVehiclesArr(), dbService.getRentsArr(), false);
+                            System.out.println("===============");
+                            System.out.println("Lista vozila:");
+                            if (resultOfSearch.isEmpty()) {
+                                System.out.println("===============");
+                                System.out.println("Nema odgovarajucih rezultata!");
+                                System.out.println("0. Povratak nazad");
+                            } else {
+                                vehicleCheckUp(resultOfSearch);
+                            }
                         }
                     }
                     case 3 -> {
                         if (activeUser.getType().equalsIgnoreCase("renter")) {
 //                            iznajmljivanjeVozila(); // TODO
                         } else if (activeUser.getType().equalsIgnoreCase("serviceman")) {
-//                            popravkaVozila(); // TODO
+                            State[] targetStates = {State.MALO_OSTECENJE, State.VELIKO_OSTECENJE};
+                            List<Vehicle> resultOfSearch = SearchUtils.vehicleSearchByState(dbService.getVehiclesArr(), targetStates);
+                            System.out.println("===============");
+                            System.out.println("Lista vozila:");
+                            System.out.println(resultOfSearch);
+                            if (resultOfSearch.isEmpty()) {
+                                System.out.println("===============");
+                                System.out.println("Nema odgovarajucih rezultata!");
+                                System.out.println("0. Povratak nazad");
+                            } else {
+                                vehicleFix(resultOfSearch);
+                            }
                         }
                     }
                     case 4 -> {
@@ -103,7 +125,7 @@ public class PlatformHelpers {
         }
     }
 
-    public void depositBalance(Card paramCard) {
+    private void depositBalance(Card paramCard) {
         System.out.print("Unesite zeljeni iznos za deponovanje: ");
         try {
             // We ask for the new balance, update the value in the paramCard object,
@@ -117,25 +139,71 @@ public class PlatformHelpers {
         }
     }
 
-//    public void popravkaVozila() {
-//        // TODO (fix params once function in place)
-//        pretragaVozila(Stanje == "veliko_ostecenje" && Stanje == "malo_ostecenje");
-//        System.out.print("Izaberite ID vozila koje zelite da popravite: ");
-//        try {
-//            // Browsing by vehicle ID as it guarantees we update the correct vehicle.
-//            // We could alternatively browse by ordinal values. However, this is inconsistent as we cannot guarantee vehicles will remain in the same order each search.
-//            String choice = scanner.next();
-//            List<Vehicle> newVehiclesArr = dbService.getVehiclesArr();
-//            for (Vehicle vehicle : newVehiclesArr) {
-//                // We check to see if the user actually inputted an ID from the displayed list of vehicles
-//                if (vehicle.getId().equalsIgnoreCase(choice) || (vehicle.checkVehicleState() != State.BEZ_OSTECENJA && vehicle.checkVehicleState() != State.NEUPOTREBLJIVO)) {
-//                    vehicle.fixVehicle(State.BEZ_OSTECENJA);
-//                }
-//            }
-//            // We set the live vehicles array, which automatically updated the database.
-//            dbService.setVehiclesArr(newVehiclesArr);
-//        } catch (Exception e) {
-//            System.out.println("Doslo je do greske pri odabiru vozila. Molimo pokusajte ponovo.");
-//        }
-//    }
+    private void vehicleCheckUp(List<Vehicle> resultOfSearch) {
+        int counter = 0;
+        for (Vehicle vehicle : resultOfSearch) {
+            System.out.println(++counter + ". " + vehicle);
+        }
+        System.out.println("===============");
+        try {
+            System.out.print("Unesite ID vozila koje zelite da popravite: ");
+            String targetVehicle = scanner.next();
+
+            Vehicle vehicle = Getters.getVehicleById(dbService, targetVehicle);
+            if (vehicle == null) {
+                System.out.println("Greska pri odabiru vozila, molimo proverite da li je ID tacno unet.");
+                return;
+            }
+
+            System.out.println("Moguca stanja:");
+            System.out.println("1. Bez ostecenja");
+            System.out.println("2. Malo ostecenje");
+            System.out.println("3. Veliko ostecenje");
+            System.out.println("4. Neupotrebljivo");
+            System.out.println("0. Povratak nazad");
+            System.out.println("===============");
+            System.out.println("Unesite stanje vozila: ");
+            try {
+                int servicemanVehicleInspectionChoice = scanner.nextInt();
+                switch (servicemanVehicleInspectionChoice) {
+                    case 1 -> vehicle.fixVehicle(State.BEZ_OSTECENJA);
+                    case 2 -> vehicle.fixVehicle(State.MALO_OSTECENJE);
+                    case 3 -> vehicle.fixVehicle(State.VELIKO_OSTECENJE);
+                    case 4 -> vehicle.fixVehicle(State.NEUPOTREBLJIVO);
+                    case 0 -> {
+                    }
+                    default -> System.out.println("Nepostojeca opcija!");
+                }
+                dbService.setVehiclesArr(dbService.getVehiclesArr());
+            } catch (InputMismatchException e) {
+                System.out.println("Molimo unesite broj kao opciju!");
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Molimo unesite broj kao opciju!");
+        }
+    }
+
+    private void vehicleFix(List<Vehicle> resultOfSearch) {
+        int counter = 0;
+        for (Vehicle vehicle : resultOfSearch) {
+            System.out.println(++counter + ". " + vehicle);
+        }
+        System.out.println("===============");
+        System.out.print("Izaberite ID vozila koje zelite da popravite: ");
+        // Browsing by vehicle ID as it guarantees we update the correct vehicle.
+        // We could alternatively browse by ordinal values. However, this is inconsistent as we cannot guarantee vehicles will remain in the same order each search.
+        String choice = scanner.next();
+        if (!choice.matches("V\\d\\d\\d\\d")) {
+            System.out.println("Greska pri odabiru vozila, molimo proverite da li je ID tacno unet.");
+        } else {
+            for (Vehicle vehicle : resultOfSearch) {
+                // We check to see if the user actually inputted an ID from the displayed list of vehicles
+                if (vehicle.getId().equalsIgnoreCase(choice) && (vehicle.checkVehicleState() != State.BEZ_OSTECENJA && vehicle.checkVehicleState() != State.NEUPOTREBLJIVO)) {
+                    vehicle.fixVehicle(State.BEZ_OSTECENJA);
+                }
+            }
+            // We set the live vehicles array, which automatically updated the database.
+            dbService.setVehiclesArr(dbService.getVehiclesArr());
+        }
+    }
 }

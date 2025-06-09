@@ -13,4 +13,19 @@ public class Bicycle extends Vehicle {
         this.height = height;
     }
 
+    public int getNumOfGears() {
+        return numOfGears;
+    }
+
+    public void setNumOfGears(int numOfGears) {
+        this.numOfGears = numOfGears;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
 }

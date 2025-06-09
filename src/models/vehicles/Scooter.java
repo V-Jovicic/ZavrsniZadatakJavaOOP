@@ -13,4 +13,19 @@ public class Scooter extends Vehicle {
         this.batteryDuration = batteryDuration;
     }
 
+    public double getHighestSpeed() {
+        return highestSpeed;
+    }
+
+    public void setHighestSpeed(double highestSpeed) {
+        this.highestSpeed = highestSpeed;
+    }
+
+    public int getBatteryDuration() {
+        return batteryDuration;
+    }
+
+    public void setBatteryDuration(int batteryDuration) {
+        this.batteryDuration = batteryDuration;
+    }
 }

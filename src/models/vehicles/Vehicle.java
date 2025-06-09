@@ -29,7 +29,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -37,7 +36,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public String getType() {
         return type;
     }
-
     public void setType(String type) {
         this.type = type;
     }
@@ -45,7 +43,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public String getOwnerUsername() {
         return ownerUsername;
     }
-
     public void setOwnerUsername(String ownerUsername) {
         this.ownerUsername = ownerUsername;
     }
@@ -53,7 +50,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public int getPerHourRate() {
         return perHourRate;
     }
-
     public void setPerHourRate(int perHourRate) {
         this.perHourRate = perHourRate;
     }
@@ -61,7 +57,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public int getWheelSize() {
         return wheelSize;
     }
-
     public void setWheelSize(int wheelSize) {
         this.wheelSize = wheelSize;
     }
@@ -69,7 +64,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public int getMaxLoadWeight() {
         return maxLoadWeight;
     }
-
     public void setMaxLoadWeight(int maxLoadWeight) {
         this.maxLoadWeight = maxLoadWeight;
     }
@@ -77,7 +71,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public boolean isRented() {
         return isRented;
     }
-
     public void setRented(boolean rented) {
         isRented = rented;
     }

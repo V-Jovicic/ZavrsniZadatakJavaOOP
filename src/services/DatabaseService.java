@@ -318,16 +318,11 @@ public class DatabaseService {
                             card.getCurrentlyRentedVehicleId() + ','
             );
 
-            int counter = 0;
             boolean appended = false;
             StringBuilder rentHistory = new StringBuilder();
             for (Rent rent : rentsArr) {
                 if (card.getOwnerUsername().equalsIgnoreCase(rent.getRenterUsername())) {
-                    if (++counter != rentsArr.size()) {
-                        rentHistory.append(rent.getId()).append('_');
-                    } else {
-                        rentHistory.append(rent.getId());
-                    }
+                    rentHistory.append(rent.getId()).append('_');
                     appended = true;
                 }
             }
@@ -337,6 +332,7 @@ public class DatabaseService {
             if (!appended) {
                 query.append("null");
             } else {
+                rentHistory.deleteCharAt(rentHistory.length() - 1);
                 query.append(rentHistory);
             }
 

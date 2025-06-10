@@ -365,7 +365,6 @@ public class PlatformHelpers {
                         System.out.println("Molimo unesite broj!");
                     }
                 }
-                targetVehicle.setOwnerUsername(activeUser.getUsername());
                 targetVehicle.rentVehicle();
 
                 // Generating new rent object and preparing new list for the setRentsArr call below

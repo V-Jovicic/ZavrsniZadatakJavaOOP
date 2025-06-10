@@ -10,7 +10,9 @@ import models.vehicles.Vehicle;
 import util.Getters;
 import util.SearchUtils;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -25,7 +27,6 @@ public class PlatformHelpers {
         this.scanner = scanner;
     }
 
-    // TODO
     public void userLoggedInMenu(User activeUser) {
         while (true) {
             System.out.println("===============");
@@ -97,12 +98,7 @@ public class PlatformHelpers {
                     }
                     case 3 -> {
                         if (activeUser.getType().equalsIgnoreCase("renter")) {
-                            List<Vehicle> resultOfSearch = SearchUtils.vehicleSearch(scanner, dbService.getVehiclesArr(), dbService.getRentsArr(), false);
-                            // If the user decides to return from the search instead of searching,
-                            // the returned value is null, so we handle that and don't proceed.
-                            if (resultOfSearch != null) {
-                                vehicleRent(activeUser, resultOfSearch);
-                            }
+                            vehicleRent(activeUser);
                         } else if (activeUser.getType().equalsIgnoreCase("serviceman")) {
                             State[] targetStates = {State.MALO_OSTECENJE, State.VELIKO_OSTECENJE};
                             List<Vehicle> resultOfStateSearch = SearchUtils.vehicleSearchByState(dbService.getVehiclesArr(), targetStates);
@@ -127,20 +123,25 @@ public class PlatformHelpers {
                                 return;
                             }
                             if (!card.getCurrentlyRentedVehicleId().equalsIgnoreCase("")) {
-//
-//                                vracanjeVozila(); // TODO
+                                vehicleReturn(activeUser);
                             }
                         } else if (activeUser.getType().equalsIgnoreCase("serviceman")) {
+                            System.out.println("===============");
                             System.out.println("Nepostojeca opcija!");
                         }
                     }
                     case 0 -> {
+                        System.out.println("===============");
                         System.out.println("Uspesno ste odjavljeni!");
                         return;
                     }
-                    default -> System.out.println("Nepostojeca opcija!");
+                    default -> {
+                        System.out.println("===============");
+                        System.out.println("Nepostojeca opcija!");
+                    }
                 }
             } catch (NumberFormatException e) {
+                System.out.println("===============");
                 System.out.println("Molimo unesite broj kao opciju!");
             }
         }
@@ -252,10 +253,9 @@ public class PlatformHelpers {
         }
     }
 
-    private void vehicleRent(User activeUser, List<Vehicle> resultOfSearch) {
-        int counter = 0;
-        Vehicle targetVehicle = null;
-        List<AdditionalEquipment> listOfEquipment = new ArrayList<>();
+    private void vehicleRent(User activeUser) {
+        // First we need to run all our checks
+
         Card activeUsersCard = Getters.getCardById(dbService, ((Renter) activeUser).getCardId());
         // We check if card fetching was successful
         if (activeUsersCard == null) {
@@ -275,6 +275,23 @@ public class PlatformHelpers {
             System.out.println("Nemate dovoljno novcanih sredstava! Molimo dopunite karticu.");
             return;
         }
+        // Checking if the user already has a rented vehicle
+        if (!activeUsersCard.getCurrentlyRentedVehicleId().equalsIgnoreCase("null")) {
+            System.out.println("===============");
+            System.out.println("Vec ste iznajmili jedno vozilo. Prvo ga vratite da biste mogli ponovo iznajmljivati.");
+            return;
+        }
+
+        // After checks are complete, we can proceed with the method body
+        List<Vehicle> resultOfSearch = SearchUtils.vehicleSearch(scanner, dbService.getVehiclesArr(), dbService.getRentsArr(), false);
+        // If the user decides to return from the search instead of searching,
+        // the returned value is null, so we handle that and don't proceed.
+        if (resultOfSearch == null) {
+            return;
+        }
+        int counter = 0;
+        Vehicle targetVehicle = null;
+        List<AdditionalEquipment> listOfEquipment = new ArrayList<>();
 
         System.out.println("===============");
         System.out.println("Lista vozila:");
@@ -363,6 +380,62 @@ public class PlatformHelpers {
             } catch (NumberFormatException e) {
                 System.out.println("===============");
                 System.out.println("Molimo unesite broj!");
+            }
+        }
+    }
+
+    private void vehicleReturn(User activeUser) {
+        String cardId = ((Renter) activeUser).getCardId();
+        Card activeUsersCard = Getters.getCardById(dbService, cardId);
+        if (activeUsersCard == null) {
+            System.out.println("===============");
+            System.out.println("Greska pri ucitavanju NGO kartice.");
+            return;
+        }
+        if (activeUsersCard.getCurrentlyRentedVehicleId().equalsIgnoreCase("null")) {
+            System.out.println("===============");
+            System.out.println("Niste iznajmili vozilo!");
+            return;
+        }
+
+        // Dummy text to honour the specification's request for prompting the user
+        // to select vehicle based on cardinal number from a list of rented vehicles
+        // even though the user may only have 1 vehicle active as rented.
+        Vehicle targetVehicle = Getters.getVehicleById(dbService, activeUsersCard.getCurrentlyRentedVehicleId());
+        if (targetVehicle == null) {
+            System.out.println("===============");
+            System.out.println("Greska pri selekciji vozila.");
+            return;
+        }
+        System.out.println("===============");
+        System.out.println("Lista iznajmljenih vozila:");
+        System.out.println("1. " + targetVehicle);
+        System.out.println("===============");
+        System.out.print("Izaberite vozilo koje zelite da vratite: ");
+        try {
+            int targetVehicleCardinalNumber = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("===============");
+            System.out.println("Molimo unesite broj!");
+        }
+
+        for (Rent targetRent : dbService.getRentsArr()) {
+            if (targetRent.getRenterUsername().equalsIgnoreCase(activeUser.getUsername()) && targetRent.getDateTimeRentedUntil() == null) {
+                targetRent.setDateTimeRentedUntil(LocalDateTime.now());
+                activeUsersCard.setCurrentlyRentedVehicleId("null");
+                targetVehicle.returnVehicle();
+                Duration durationBetweenStartAndEndRentDate = Duration.between(targetRent.getDateTimeRentedFrom(), targetRent.getDateTimeRentedUntil());
+                double amountOwedByRenter = (double) durationBetweenStartAndEndRentDate.toHours() * targetVehicle.getPerHourRate();
+                double updatedBalance = activeUsersCard.getBalance() - amountOwedByRenter;
+                activeUsersCard.setBalance(updatedBalance);
+                if (updatedBalance < 0) {
+                    System.out.println("===============");
+                    System.out.println("Kartica Vam je zaduzena! Dalja iznajmljivanja nece biti moguca do dopune sredstava na pozitivnu vrednost!");
+                }
+                dbService.setRentsArr(dbService.getRentsArr());
+                dbService.setCardsArr(dbService.getCardsArr());
+                dbService.setVehiclesArr(dbService.getVehiclesArr());
+
             }
         }
     }

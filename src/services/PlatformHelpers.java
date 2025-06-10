@@ -66,9 +66,9 @@ public class PlatformHelpers {
                         int counter = 0;
                         System.out.println("===============");
                         System.out.println("Lista vozila:");
-                        if (resultOfSearch == null) {
+                        if (resultOfSearch == null || resultOfSearch.isEmpty()) {
+                            System.out.println("===============");
                             System.out.println("Nema odgovarajucih rezultata!");
-                            System.out.println("0. Povratak nazad");
                         } else {
                             for (Vehicle vehicle : resultOfSearch) {
                                 System.out.println(++counter + ". " + vehicle);
@@ -105,7 +105,6 @@ public class PlatformHelpers {
                             List<Vehicle> finalResultOfSearchAfterAvailability = SearchUtils.vehicleSearchByAvailability(resultOfStateSearch, false);
                             System.out.println("===============");
                             System.out.println("Lista vozila:");
-                            System.out.println(finalResultOfSearchAfterAvailability);
                             if (finalResultOfSearchAfterAvailability.isEmpty()) {
                                 System.out.println("===============");
                                 System.out.println("Nema odgovarajucih rezultata!");
@@ -170,7 +169,7 @@ public class PlatformHelpers {
         }
         System.out.println("0. Povratak nazad");
         System.out.println("===============");
-        System.out.print("Unesite ID vozila koje zelite da popravite: ");
+        System.out.print("Unesite ID vozila koje zelite da pregledate: ");
         try {
             int targetVehicleCardinalNumber = Integer.parseInt(scanner.nextLine());
             counter = 0;
@@ -197,7 +196,7 @@ public class PlatformHelpers {
             System.out.println("4. Neupotrebljivo");
             System.out.println("0. Povratak nazad");
             System.out.println("===============");
-            System.out.println("Unesite stanje vozila: ");
+            System.out.print("Unesite stanje vozila: ");
             try {
                 int servicemanVehicleInspectionChoice = Integer.parseInt(scanner.nextLine());
                 switch (servicemanVehicleInspectionChoice) {
@@ -240,12 +239,19 @@ public class PlatformHelpers {
             for (Vehicle vehicle : resultOfSearch) {
                 if (++counter == targetVehicleCardinalNumber) {
                     vehicle.fixVehicle(State.BEZ_OSTECENJA);
+                    for (Rent rent : dbService.getRentsArr()) {
+                        if (rent.getRentedVehicleId().equalsIgnoreCase(vehicle.getId())) {
+                            rent.setServiceDone(true);
+                            break;
+                        }
+                    }
                     break;
                 }
             }
 
-            // We set the live vehicles array, which automatically updates the database.
+            // We set the live vehicles & rents arrays, which automatically updates the database.
             dbService.setVehiclesArr(dbService.getVehiclesArr());
+            dbService.setRentsArr(dbService.getRentsArr());
 
         } catch (NumberFormatException e) {
             System.out.println("===============");

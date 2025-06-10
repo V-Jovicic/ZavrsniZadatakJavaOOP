@@ -67,8 +67,8 @@ public class SearchUtils {
                         try {
                             int case3Choice = Integer.parseInt(scanner.nextLine());
                             switch (case3Choice) {
-                                case 1 -> returnArrParams[2] = "true";
-                                case 2 -> returnArrParams[2] = "false";
+                                case 1 -> returnArrParams[1] = "true";
+                                case 2 -> returnArrParams[1] = "false";
                                 case 0 -> {
                                 }
                                 default -> System.out.println("Nepostojeci izbor!");
@@ -93,8 +93,8 @@ public class SearchUtils {
                         try {
                             int case2Choice = Integer.parseInt(scanner.nextLine());
                             switch (case2Choice) {
-                                case 1 -> returnArrParams[1] = "true";
-                                case 2 -> returnArrParams[1] = "false";
+                                case 1 -> returnArrParams[2] = "true";
+                                case 2 -> returnArrParams[2] = "false";
                                 case 0 -> {
                                 }
                                 default -> {
@@ -110,6 +110,7 @@ public class SearchUtils {
                     case 9 -> {
                         List<Vehicle> arr1;
                         List<Vehicle> arr2;
+
                         if (returnArrParams[0].equals("null")) {
                             arr1 = vehiclesArr;
                         } else {
@@ -165,9 +166,9 @@ public class SearchUtils {
         List<Vehicle> returnArr = new ArrayList<>();
         for (Rent rent : rentsArr) {
             if (rent.isServiceDone() == serviceDone && rent.getDateTimeRentedUntil() != null) {
-                for (Vehicle vozilo : vehiclesArr) {
-                    if (rent.getRentedVehicleId().equalsIgnoreCase(vozilo.getId())) {
-                        returnArr.add(vozilo);
+                for (Vehicle vehicle : vehiclesArr) {
+                    if (rent.getRentedVehicleId().equalsIgnoreCase(vehicle.getId()) && !returnArr.contains(vehicle)) {
+                        returnArr.add(vehicle);
                     }
                 }
             }

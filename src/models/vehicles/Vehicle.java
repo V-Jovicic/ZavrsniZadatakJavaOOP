@@ -71,9 +71,6 @@ public abstract class Vehicle implements Rentable, Serviceable {
     public boolean isRented() {
         return isRented;
     }
-    public void setRented(boolean rented) {
-        isRented = rented;
-    }
 
     @Override
     public State checkVehicleState() {
@@ -85,15 +82,14 @@ public abstract class Vehicle implements Rentable, Serviceable {
         this.state = state;
     }
 
-    // TODO
     @Override
     public void rentVehicle() {
-
+        this.isRented = true;
     }
 
     @Override
     public void returnVehicle() {
-
+        this.isRented = false;
     }
 
     @Override

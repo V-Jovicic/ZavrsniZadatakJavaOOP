@@ -8,19 +8,19 @@ import java.util.List;
 public class Rent {
 
     private String id;
-    private LocalDateTime dateTimeValidFrom;
-    private LocalDateTime dateTimeValidUntil;
+    private LocalDateTime dateTimeRentedFrom;
+    private LocalDateTime dateTimeRentedUntil;
     private String renterUsername;
-    private String vehicleId;
+    private String rentedVehicleId;
     private List<AdditionalEquipment> equipment;
     private boolean serviceDone;
 
-    public Rent(String id, LocalDateTime dateTimeValidFrom, LocalDateTime dateTimeValidUntil, String renterUsername, String vehicleId, List<AdditionalEquipment> equipment, boolean serviceDone) {
+    public Rent(String id, LocalDateTime dateTimeRentedFrom, LocalDateTime dateTimeRentedUntil, String renterUsername, String rentedVehicleId, List<AdditionalEquipment> equipment, boolean serviceDone) {
         this.id = id;
-        this.dateTimeValidFrom = dateTimeValidFrom;
-        this.dateTimeValidUntil = dateTimeValidUntil;
+        this.dateTimeRentedFrom = dateTimeRentedFrom;
+        this.dateTimeRentedUntil = dateTimeRentedUntil;
         this.renterUsername = renterUsername;
-        this.vehicleId = vehicleId;
+        this.rentedVehicleId = rentedVehicleId;
         this.equipment = equipment;
         this.serviceDone = serviceDone;
     }
@@ -32,18 +32,20 @@ public class Rent {
         this.id = id;
     }
 
-    public LocalDateTime getDateTimeValidFrom() {
-        return dateTimeValidFrom;
-    }
-    public void setDateTimeValidFrom(LocalDateTime dateTimeValidFrom) {
-        this.dateTimeValidFrom = dateTimeValidFrom;
+    public LocalDateTime getDateTimeRentedFrom() {
+        return dateTimeRentedFrom;
     }
 
-    public LocalDateTime getDateTimeValidUntil() {
-        return dateTimeValidUntil;
+    public void setDateTimeRentedFrom(LocalDateTime dateTimeRentedFrom) {
+        this.dateTimeRentedFrom = dateTimeRentedFrom;
     }
-    public void setDateTimeValidUntil(LocalDateTime dateTimeValidUntil) {
-        this.dateTimeValidUntil = dateTimeValidUntil;
+
+    public LocalDateTime getDateTimeRentedUntil() {
+        return dateTimeRentedUntil;
+    }
+
+    public void setDateTimeRentedUntil(LocalDateTime dateTimeRentedUntil) {
+        this.dateTimeRentedUntil = dateTimeRentedUntil;
     }
 
     public String getRenterUsername() {
@@ -53,12 +55,12 @@ public class Rent {
         this.renterUsername = renterUsername;
     }
 
-    public String getVehicleId() {
-        return vehicleId;
+    public String getRentedVehicleId() {
+        return rentedVehicleId;
     }
 
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
+    public void setRentedVehicleId(String rentedVehicleId) {
+        this.rentedVehicleId = rentedVehicleId;
     }
 
     public List<AdditionalEquipment> getEquipment() {
@@ -79,10 +81,10 @@ public class Rent {
     public String toString() {
         return "Rent{" +
                 "id='" + id + '\'' +
-                ", dateTimeValidFrom=" + dateTimeValidFrom +
-                ", dateTimeValidUntil=" + dateTimeValidUntil +
+                ", dateTimeValidFrom=" + dateTimeRentedFrom +
+                ", dateTimeValidUntil=" + dateTimeRentedUntil +
                 ", renterUsername='" + renterUsername + '\'' +
-                ", vehicleId=" + vehicleId +
+                ", vehicleId=" + rentedVehicleId +
                 ", equipment=" + equipment +
                 ", serviceDone=" + serviceDone +
                 '}';

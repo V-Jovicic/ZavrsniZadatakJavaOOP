@@ -6,7 +6,6 @@ import models.users.Serviceman;
 import models.users.User;
 import util.SearchUtils;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,9 +19,9 @@ public class AuthService {
 
         System.out.println("===============");
         System.out.print("Unesite korisničko ime: ");
-        String username = scanner.next();
+        String username = scanner.nextLine();
         System.out.print("Unesite lozinku: ");
-        String password = scanner.next();
+        String password = scanner.nextLine();
 
         for (User user : userArray) {
             if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
@@ -53,13 +52,13 @@ public class AuthService {
 
             int choice;
             try {
-                choice = scanner.nextInt();
+                choice = Integer.parseInt(scanner.nextLine());
                 // If the choice isn't a valid option we break the current iteration of the while loop.
                 if (choice != 1 && choice != 2 && choice != 0) {
                     System.out.println("Nepostojeca opcija!");
                     continue;
                 }
-            } catch (InputMismatchException e) {
+            } catch (NumberFormatException e) {
                 // If the choice isn't a number we break the current iteration of the while loop.
                 System.out.println("Molimo unesite broj kao opciju!");
                 continue;
@@ -71,7 +70,7 @@ public class AuthService {
                 return null;
             }else {
                 System.out.print("Unesite korisničko ime: ");
-                String username = scanner.next();
+                String username = scanner.nextLine();
                 // We check whether the user already exists. It is assumed that usernames are unique.
                 boolean check = SearchUtils.usernameAlreadyExists(dbService.getUsersArr(), username);
                 if (check) {
@@ -79,11 +78,11 @@ public class AuthService {
                     continue;
                 }
                 System.out.print("Unesite lozinku: ");
-                String password = scanner.next();
+                String password = scanner.nextLine();
                 System.out.print("Unesite ime: ");
-                String name = scanner.next();
+                String name = scanner.nextLine();
                 System.out.print("Unesite prezime: ");
-                String surname = scanner.next();
+                String surname = scanner.nextLine();
 
                 // Despite int choice having only 2 possible values at this point in the code, for consistency sakes I used a switch.
                 // This ensures intended behaviour in case of any missed possibilities, and enables scalability in regard to # of user types.

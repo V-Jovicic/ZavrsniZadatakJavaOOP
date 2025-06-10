@@ -142,7 +142,6 @@ public class DatabaseService {
         }
         return cardsArr;
     }
-
     private List<Rent> loadRents() {
 
         // We try to read the cards .csv file.
@@ -370,13 +369,13 @@ public class DatabaseService {
         for (Rent rent : rentsArr) {
             StringBuilder query = new StringBuilder(
                     rent.getId() + "," +
-                            rent.getDateTimeValidFrom() + "," +
-                            rent.getDateTimeValidUntil() + "," +
+                            rent.getDateTimeRentedFrom() + "," +
+                            rent.getDateTimeRentedUntil() + "," +
                             rent.getRenterUsername() + "," +
-                            rent.getVehicleId() + ","
+                            rent.getRentedVehicleId() + ","
             );
 
-            if (rent.getEquipment().isEmpty()) {
+            if (rent.getEquipment().isEmpty() || rent.getEquipment() == null) {
                 query.append("null,");
             } else {
                 int counter = 0;
@@ -384,12 +383,12 @@ public class DatabaseService {
                     if (++counter == rent.getEquipment().size()) {
                         query.append(equipment);
                     } else {
-                        query.append(equipment).append("_");
+                        query.append(equipment).append("/");
                     }
                 }
             }
 
-            query.append(rent.isServiceDone());
+            query.append(",").append(rent.isServiceDone());
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(RENTS_CSV, true))) {
                 writer.write(String.valueOf(query));
@@ -407,6 +406,12 @@ public class DatabaseService {
         LocalDate cardValidFrom = LocalDate.now();
         LocalDate cardValidUntil = LocalDate.now().plusYears(1);
         return new Card(id, ownerUsername, cardValidFrom, cardValidUntil, 0, "", "");
+    }
+
+    Rent generateRentRecord(String renterUsername, String rentedVehicleId, List<AdditionalEquipment> listOfEquipment) {
+        int counter = rentsArr.size() + 1;
+        String id = "R" + String.format("%04d", counter);
+        return new Rent(id, LocalDateTime.now(), null, renterUsername, rentedVehicleId, listOfEquipment, false);
     }
 
 }

@@ -5,7 +5,6 @@ import services.AuthService;
 import services.DatabaseService;
 import services.PlatformHelpers;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,7 +27,7 @@ public class Platform {
 
             try {
                 System.out.print("Izaberite opciju: ");
-                int choice = scanner.nextInt();
+                int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
                     case 1 -> {
                         activeUser = authService.login(dbService.getUsersArr(), scanner); // THIS CAN RETURN NULL
@@ -49,9 +48,9 @@ public class Platform {
                         }
                     }
                     case 0 -> { return; }
-                    default -> { System.out.println("Nepostojeca opcija!"); }
+                    default -> System.out.println("Nepostojeca opcija!");
                 }
-            } catch (InputMismatchException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Molimo unesite broj kao opciju!");
             }
         }
